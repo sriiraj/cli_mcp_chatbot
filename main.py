@@ -6,21 +6,16 @@ from contextlib import AsyncExitStack
 
 from mcp_client import MCPClient
 from core.claude import Claude
-
 from core.cli_chat import CliChat
 from core.cli import CliApp
 
 load_dotenv()
 
-# Anthropic Config
-claude_model = os.getenv("CLAUDE_MODEL", "")
+claude_model = os.getenv("CLAUDE_MODEL", "claude-haiku-4-5-20251001")
 anthropic_api_key = os.getenv("ANTHROPIC_API_KEY", "")
 
-
 assert claude_model, "Error: CLAUDE_MODEL cannot be empty. Update .env"
-assert anthropic_api_key, (
-    "Error: ANTHROPIC_API_KEY cannot be empty. Update .env"
-)
+assert anthropic_api_key, "Error: ANTHROPIC_API_KEY cannot be empty. Update .env"
 
 
 SYSTEM_PROMPT = """You are a GitHub Career Intelligence assistant. You help developers:
