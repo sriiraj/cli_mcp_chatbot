@@ -12,11 +12,11 @@ Ask it anything about GitHub — it fetches live data, reasons over it, and give
 
 ```
 > What are the most trending Python AI repos this week?
-> Analyze the GitHub profile of torvalds
+> Analyze the GitHub profile of sriiraj
 > What skill gaps do I have if I want to become an ML engineer?
 > /linkedin_post microsoft/vscode
-> /career_analysis gvanrossum
-> /skill_gap yourname
+> /career_analysis sriiraj
+> /skill_gap sriiraj
 ```
 
 ---
