@@ -5,10 +5,16 @@ from anthropic.types import MessageParam
 
 
 class Chat:
-    def __init__(self, claude_service: Claude, clients: dict[str, MCPClient]):
+    def __init__(
+        self,
+        claude_service: Claude,
+        clients: dict[str, MCPClient],
+        system_prompt: str = None,
+    ):
         self.claude_service: Claude = claude_service
         self.clients: dict[str, MCPClient] = clients
         self.messages: list[MessageParam] = []
+        self.system_prompt: str = system_prompt
 
     async def _process_query(self, query: str):
         self.messages.append({"role": "user", "content": query})
@@ -25,6 +31,7 @@ class Chat:
             response = self.claude_service.chat(
                 messages=self.messages,
                 tools=await ToolManager.get_all_tools(self.clients),
+                system=self.system_prompt,
             )
 
             self.claude_service.add_assistant_message(self.messages, response)

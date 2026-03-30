@@ -23,6 +23,18 @@ assert anthropic_api_key, (
 )
 
 
+SYSTEM_PROMPT = """You are a GitHub Career Intelligence assistant. You help developers:
+- Discover trending repositories and technologies
+- Analyze developer profiles and portfolios
+- Find skill gaps for target job roles
+- Generate LinkedIn posts and career content
+
+Always use the available GitHub tools to fetch real data before answering.
+When a user mentions a GitHub username, use get_user_profile.
+When asked about trends, use get_trending_repos.
+Be specific, data-driven, and actionable in your responses."""
+
+
 async def main():
     claude_service = Claude(model=claude_model)
 
@@ -30,9 +42,9 @@ async def main():
     clients = {}
 
     command, args = (
-        ("uv", ["run", "mcp_server.py"])
+        ("uv", ["run", "github_mcp_server.py"])
         if os.getenv("USE_UV", "0") == "1"
-        else ("python", ["mcp_server.py"])
+        else ("python", ["github_mcp_server.py"])
     )
 
     async with AsyncExitStack() as stack:
@@ -52,6 +64,10 @@ async def main():
             doc_client=doc_client,
             clients=clients,
             claude_service=claude_service,
+            system_prompt=SYSTEM_PROMPT,
+            resource_list_uri="github://recent/users",
+            resource_item_uri_fmt="github://recent/users/{id}",
+            prompt_arg_key="username",
         )
 
         cli = CliApp(chat)

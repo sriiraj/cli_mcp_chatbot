@@ -13,24 +13,32 @@ class CliChat(Chat):
         doc_client: MCPClient,
         clients: dict[str, MCPClient],
         claude_service: Claude,
+        system_prompt: str = None,
+        resource_list_uri: str = "github://recent/users",
+        resource_item_uri_fmt: str = "github://recent/users/{id}",
+        prompt_arg_key: str = "username",
     ):
-        super().__init__(clients=clients, claude_service=claude_service)
+        super().__init__(clients=clients, claude_service=claude_service, system_prompt=system_prompt)
 
         self.doc_client: MCPClient = doc_client
+        self.resource_list_uri = resource_list_uri
+        self.resource_item_uri_fmt = resource_item_uri_fmt
+        self.prompt_arg_key = prompt_arg_key
 
     async def list_prompts(self) -> list[Prompt]:
         return await self.doc_client.list_prompts()
 
     async def list_docs_ids(self) -> list[str]:
-        return await self.doc_client.read_resource("docs://documents")
+        return await self.doc_client.read_resource(self.resource_list_uri)
 
-    async def get_doc_content(self, doc_id: str) -> str:
-        return await self.doc_client.read_resource(f"docs://documents/{doc_id}")
+    async def get_doc_content(self, item_id: str) -> str:
+        uri = self.resource_item_uri_fmt.format(id=item_id)
+        return await self.doc_client.read_resource(uri)
 
     async def get_prompt(
         self, command: str, doc_id: str
     ) -> list[PromptMessage]:
-        return await self.doc_client.get_prompt(command, {"doc_id": doc_id})
+        return await self.doc_client.get_prompt(command, {self.prompt_arg_key: doc_id})
 
     async def _extract_resources(self, query: str) -> str:
         mentions = [word[1:] for word in query.split() if word.startswith("@")]
